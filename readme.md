@@ -4,14 +4,14 @@ This repository provides a Trie (prefix tree) implementation in both C++ and Pyt
 
 ---
 
-### C++: Trie.cpp
+### C++: Trie.h && Trie.cpp
 
 #### Usage
-1. Include `Trie.cpp` in your project or copy the `Trie` class definition.
+1. Include `Trie.h` in your project or copy the `Trie` class definition.
 2. Use the `Trie` class as follows:
 
 ```cpp
-#include "Trie.cpp" // or copy the class definition
+#include "Trie.h"
 #include <iostream>
 using namespace std;
 

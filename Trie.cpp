@@ -1,79 +1,68 @@
-struct Node {
-    Node* children[26];
-    bool isEndOfWord;
+#include "Trie.h"
+using namespace std;
 
-    Node() {
-        isEndOfWord = false;
-        for (int i = 0; i < 26; i++) {
-            children[i] = nullptr;
-        }
+Node::Node() {
+    isEndOfWord = false;
+    for (int i = 0; i < 26; i++) {
+        children[i] = nullptr;
     }
-};
+}
 
-class Trie {
-private:
-    Node* root;
-    bool isEmpty(Node* node) {
-        for (int i = 0; i < 26; i++) {
-            if (node->children[i]) return false;
-        }
-        return true;
+Trie::Trie() {
+    root = new Node();
+}
+
+bool Trie::isEmpty(Node* node) {
+    for (int i = 0; i < 26; i++) {
+        if (node->children[i]) return false;
     }
+    return true;
+}
 
-    Node* remove(Node* curr, string word, int depth) {
-        if (!curr) return nullptr;
-        
-        if (depth == word.size()) {
-
-            if (curr->isEndOfWord) curr->isEndOfWord = false;
-
-            if (isEmpty(curr)) {
-                delete curr;
-                curr = nullptr;
-            }
-
-            return curr;
+void Trie::insert(string word) {
+    Node* curr = root;
+    for (char c : word) {
+        int index = c - 'a';
+        if (!curr->children[index]) {
+            curr->children[index] = new Node();
         }
+        curr = curr->children[index];
+    }
+    curr->isEndOfWord = true;
+}
 
-        int index = word[depth] - 'a';
-        curr->children[index] = remove(curr->children[index], word, depth + 1);
+bool Trie::search(string word) {
+    Node* curr = root;
+    for (char c : word) {
+        int index = c - 'a';
+        if (!curr->children[index]) return false;
+        curr = curr->children[index];
+    }
+    return curr->isEndOfWord;
+}
 
-        if (isEmpty(curr) && curr->isEndOfWord == false) {
+Node* Trie::remove(Node* curr, string word, int depth) {
+    if (!curr) return nullptr;
+
+    if (depth == word.size()) {
+        if (curr->isEndOfWord) curr->isEndOfWord = false;
+        if (isEmpty(curr)) {
             delete curr;
             curr = nullptr;
         }
-
         return curr;
     }
 
-public:
-    Trie() {
-        root = new Node();
-    }
+    int index = word[depth] - 'a';
+    curr->children[index] = remove(curr->children[index], word, depth + 1);
 
-    void insert(string word) {
-        Node* curr = root;
-        for (char c : word) {
-            int index = c - 'a';
-            if (!curr->children[index]) {
-                curr->children[index] = new Node();
-            }
-            curr = curr->children[index];
-        }
-        curr->isEndOfWord = true;
+    if (isEmpty(curr) && curr->isEndOfWord == false) {
+        delete curr;
+        curr = nullptr;
     }
+    return curr;
+}
 
-    bool search(string word) {
-        Node* curr = root;
-        for (char c : word) {
-            int index = c - 'a';
-            if (!curr->children[index]) return false;
-            curr = curr->children[index];
-        }
-        return curr->isEndOfWord;
-    }
-
-    void remove(string word) {
-        root = remove(root, word, 0);
-    }
-};
+void Trie::remove(string word) {
+    root = remove(root, word, 0);
+}
